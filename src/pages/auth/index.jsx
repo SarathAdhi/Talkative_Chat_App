@@ -13,25 +13,21 @@ export default function SignIn({ providers }) {
     if (_isAuth) router.push("/");
   }, []);
 
-  if (!_isAuth) {
-    return (
-      <PageLayout className="justify-center items-center">
-        {Object.values(providers).map((provider) => (
-          <div key={provider.name}>
-            <button
-              className="bg-white px-3 py-2 rounded-lg text-black text-2xl font-medium flex items-center justify-center gap-2"
-              onClick={() => signIn(provider.id)}
-            >
-              <GoogleSVG />
-              {provider.name}
-            </button>
-          </div>
-        ))}
-      </PageLayout>
-    );
-  } else {
-    return <PageLayout></PageLayout>;
-  }
+  return (
+    <PageLayout className="justify-center items-center">
+      {Object.values(providers).map((provider) => (
+        <div key={provider.name}>
+          <button
+            className="bg-white px-3 py-2 rounded-lg text-black text-2xl font-medium flex items-center justify-center gap-2"
+            onClick={() => signIn(provider.id)}
+          >
+            <GoogleSVG />
+            {provider.name}
+          </button>
+        </div>
+      ))}
+    </PageLayout>
+  );
 }
 
 export async function getServerSideProps(context) {
