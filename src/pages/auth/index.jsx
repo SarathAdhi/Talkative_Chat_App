@@ -9,10 +9,6 @@ export default function SignIn({ providers }) {
   const router = useRouter();
   const _isAuth = isAuth();
 
-  useEffect(() => {
-    if (_isAuth) router.push("/");
-  }, []);
-
   return (
     <PageLayout className="justify-center items-center">
       {Object.values(providers).map((provider) => (
@@ -30,9 +26,20 @@ export default function SignIn({ providers }) {
   );
 }
 
-export async function getStaticProps(context) {
-  const providers = await getProviders();
-  return {
-    props: { providers },
-  };
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  if (session !== null) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+    };
+  } else {
+    const providers = await getProviders();
+    return {
+      props: { providers },
+    };
+  }
 }
