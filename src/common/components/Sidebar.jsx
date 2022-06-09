@@ -12,6 +12,7 @@ import { InputModal } from "../../utils/InputModal";
 import axios from "axios";
 import { Url } from "../../common/constants/Url";
 import { Context } from "../context/Context";
+import { isAuth } from "../ConditionalWrapper";
 
 const tabs = "";
 
@@ -58,22 +59,24 @@ const options = [
 ];
 
 export const Sidebar = () => {
-  const { data: session } = useSession();
   const { _createdRooms } = useContext(Context);
 
   const [createdRoom, setCreatedRoom] = _createdRooms;
-  console.log(createdRoom);
+  // console.log(createdRoom);
 
-  if (session) {
+  const _isAuth = isAuth();
+
+  if (_isAuth) {
+    const { user } = _isAuth;
     return (
       <div className="w-96 p-5 flex flex-col gap-y-5 bg-[#160040] rounded-l-lg">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-x-2">
             <img
               className="w-10 h-10 rounded-full"
-              src={session.user ? session.user.image : <UserCircleIcon />}
+              src={user ? user.image : <UserCircleIcon />}
             />
-            <H5>{session.user ? session.user.name : "User"}</H5>
+            <H5>{user ? user.name : "User"}</H5>
           </div>
 
           <DropDownOptions options={options} />
