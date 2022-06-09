@@ -3,4 +3,4 @@
   to = "/index.html"
   status = 200
 [functions]
-  included_files = ["public/locales/*"]
+  included_files = ["public/*"]
