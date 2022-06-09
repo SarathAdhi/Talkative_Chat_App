@@ -20,20 +20,9 @@ export default function SignIn({ providers }) {
   );
 }
 
-export async function getStaticProps(context) {
-  const session = await getSession(context);
-
-  if (session !== null) {
-    return {
-      redirect: {
-        permanent: true,
-        destination: "/",
-      },
-    };
-  } else {
-    const providers = await getProviders();
-    return {
-      props: { providers },
-    };
-  }
+export async function getServerSideProps(context) {
+  const providers = await getProviders();
+  return {
+    props: { providers },
+  };
 }
