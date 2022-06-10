@@ -3,13 +3,11 @@ import { PageLayout } from "../../common/layouts/PageLayout";
 import { GoogleSVG } from "../../assets/Svg";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { isAuth } from "../../common/ConditionalWrapper";
 import axios from "axios";
 import { Url } from "../../common/constants/Url";
 
 export default function SignIn({ providers }) {
   const router = useRouter();
-  const _isAuth = isAuth();
 
   return (
     <PageLayout className="justify-center items-center">
@@ -35,7 +33,7 @@ export async function getServerSideProps(context) {
     await axios.post(Url + "/auth", {
       name: session.user.name,
       email: session.user.email,
-      userImage: session.user.image,
+      image: session.user.image,
     });
     return {
       redirect: {

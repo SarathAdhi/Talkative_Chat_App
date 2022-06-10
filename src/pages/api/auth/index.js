@@ -1,32 +1,36 @@
-import clientPromise from "../../../lib/db";
+import { addDoc, getDocs } from "firebase/firestore";
+import { userCollectionRef } from "../../../lib/firebase";
 
 export default async function handler(req, res) {
-  const client = await clientPromise;
-  const db = client.db("Database");
-
   const { token } = req.body;
 
   switch (req.method) {
     case "POST":
-      const { name, email, userImage } = req.body;
+      const { name, email, image } = req.body;
 
-      const isEmailExist = await db
-        .collection("users")
-        .find({ email: email })
-        .toArray();
-
-      if (isEmailExist.length === 0) {
-        await db.collection("users").insertOne({
-          name: name,
-          email: email,
-          userImage: userImage,
-          createdRoom: [],
-          joinedRoom: [],
+      const URL_Snapshot = await getDocs(userCollectionRef);
+      const isUserExist = URL_Snapshot.docs
+        .map((doc) => doc.data())
+        .filter((data) => {
+          return data.email === email;
+        })
+        .map((data) => {
+          return data;
         });
-        res.json({ message: "Created new account successfully" });
+
+      if (isUserExist.length === 0) {
+        const newUser = {
+          email,
+          name,
+          image,
+        };
+        await addDoc(userCollectionRef, newUser);
+
+        res.json({ status: 200, message: "Created successfully" });
       } else {
-        res.json({ message: "Logged In Successfully" });
+        res.json({ status: 200, message: "Login successfully" });
       }
+
       break;
   }
 }

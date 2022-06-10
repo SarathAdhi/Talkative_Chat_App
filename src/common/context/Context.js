@@ -1,19 +1,15 @@
-import axios from "axios";
 import React, { useState } from "react";
-import { useEffect } from "react";
-import { isAuth } from "../ConditionalWrapper";
-import { Url } from "../constants/Url";
 
 export const Context = React.createContext();
 
 export const ContextProvider = ({ children }) => {
-  const [createdRooms, setCreatedRooms] = useState([]);
   const [userData, setUserData] = useState([]);
+  const [userRoomDetails, setUserRoomDetails] = useState([]);
 
   return (
     <Context.Provider
       value={{
-        _createdRooms: [createdRooms, setCreatedRooms],
+        _userRooms: [userRoomDetails, setUserRoomDetails],
         _user: [userData, setUserData],
       }}
     >

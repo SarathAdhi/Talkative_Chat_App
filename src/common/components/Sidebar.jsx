@@ -33,7 +33,7 @@ const createRoom = async () => {
     handleFunction: async (roomId) => {
       if (roomId) {
         const { user } = await getSession();
-        const response = await axios.post(`${Url}/room/create`, {
+        const response = await axios.post(Url + "/room/create", {
           name: user.name,
           email: user.email,
           roomId,
@@ -46,6 +46,8 @@ const createRoom = async () => {
           const { message } = await response.data;
           showSuccessToast({ title: message });
         }
+      } else {
+        showErrorsToast({ title: "Enter a room Id" });
       }
     },
   });
@@ -110,15 +112,14 @@ const options = [
 ];
 
 export const Sidebar = () => {
-  const { _createdRooms } = useContext(Context);
+  const { _userRooms } = useContext(Context);
+  const [userRoomDetails, setUserRoomDetails] = _userRooms;
 
-  const [createdRoom, setCreatedRoom] = _createdRooms;
-  // console.log(createdRoom);
+  const { _user } = useContext(Context);
+  const [userData, setUserData] = _user;
 
-  const _isAuth = isAuth();
-
-  if (_isAuth) {
-    const { user } = _isAuth;
+  if (userData.length !== 0) {
+    const user = userData;
     return (
       <div className="w-96 p-5 flex flex-col gap-y-5 bg-[#160040] rounded-l-lg">
         <div className="flex justify-between items-center">
@@ -134,13 +135,11 @@ export const Sidebar = () => {
         </div>
         <Input type="text" placeholder="Search for users or message" />
         <div className="overflow-y-auto ">
-          {tabs &&
-            [...Array(20)].map((_, index) => (
-              <div key={index}>
-                <H4>{tabs[0].name}</H4>
-                <P>{tabs[0].message}</P>
-              </div>
-            ))}
+          {userRoomDetails.map((room, index) => (
+            <div key={index}>
+              <H4>{room.roomId}</H4>
+            </div>
+          ))}
         </div>
       </div>
     );
