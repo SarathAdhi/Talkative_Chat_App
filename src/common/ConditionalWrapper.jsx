@@ -12,7 +12,7 @@ export const ConditionalWrapper = ({ children }) => {
   const [userData, setUserData] = _user;
 
   useEffect(() => {
-    const roomsRef = ref(dbDatabase, "rooms");
+    const roomsRef = ref(dbDatabase);
 
     onValue(roomsRef, (snapshot) => {
       const data = snapshot.val();
