@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-const showToast = ({ title, icon }) => {
+const showToast = async ({ title, icon }) => {
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -13,28 +13,28 @@ const showToast = ({ title, icon }) => {
     },
   });
 
-  Toast.fire({
+  await Toast.fire({
     icon: icon,
     title: title,
   });
 };
 
-export const showSuccessToast = (props) => {
+export const showSuccessToast = async (props) => {
   showToast({ ...props, icon: "success" });
 };
 
-export const showErrorsToast = (props) => {
+export const showErrorsToast = async (props) => {
   showToast({ ...props, icon: "error" });
 };
 
-export const showWarningToast = (props) => {
+export const showWarningToast = async (props) => {
   showToast({ ...props, icon: "warning" });
 };
 
-export const showInfoToast = (props) => {
+export const showInfoToast = async (props) => {
   showToast({ ...props, icon: "info" });
 };
 
-export const showQuestionToast = (props) => {
+export const showQuestionToast = async (props) => {
   showToast({ ...props, icon: "question" });
 };

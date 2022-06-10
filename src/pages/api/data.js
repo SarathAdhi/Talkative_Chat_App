@@ -11,15 +11,6 @@ export default async function handler(req, res) {
     const users = await db.collection("users").find({}).toArray();
 
     res.json({ status: 200, data: users });
-  } else if (req.method === "POST") {
-    const { email } = req.body;
-
-    const userFullData = await db
-      .collection("users")
-      .find({ email: email })
-      .toArray();
-
-    res.json({ status: 200, data: userFullData });
   }
   // }
 }

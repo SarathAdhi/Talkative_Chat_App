@@ -5,28 +5,42 @@ export default async function handler(req, res) {
   const db = client.db("Database");
   switch (req.method) {
     case "POST":
-      let { email, roomId } = req.body;
+      const { email, name, roomId } = req.body;
 
-      const timeStamp = new Date().getTime();
-      roomId = roomId + "-" + timeStamp;
-
-      await db.collection("users").updateOne(
-        { email: email },
-        {
-          $push: {
-            createdRoom: roomId,
-          },
-        }
-      );
-      const data = await db
+      const isRoomExist = await db
         .collection("users")
-        .find({ email: email })
+        .find({
+          createdRoom: { $eq: roomId },
+        })
         .toArray();
 
-      res.json({
-        message: "Room Created Successfully",
-        data: data[0].createdRoom,
-      });
-      break;
+      if (isRoomExist.length === 0) {
+        await db.collection("users").updateOne(
+          { email: email },
+          {
+            $push: {
+              createdRoom: roomId,
+            },
+          }
+        );
+        await db.collection("rooms").insertOne({
+          adminName: name,
+          adminEmail: email,
+          roomId: roomId,
+          members: [],
+          chats: [],
+        });
+        const data = await db
+          .collection("users")
+          .find({ email: email })
+          .toArray();
+
+        res.json({
+          status: 200,
+          message: "Room Created Successfully",
+          data: data[0].createdRoom,
+        });
+        break;
+      } else res.json({ status: 400, message: "Room already exist" });
   }
 }

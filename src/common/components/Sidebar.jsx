@@ -1,18 +1,20 @@
 import React, { useContext } from "react";
 import { H4, H5, P } from "../../common/components/elements/Text";
 import { Input } from "./elements/Input";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import {
   LogoutIcon,
   PlusCircleIcon,
+  UserAddIcon,
   UserCircleIcon,
 } from "@heroicons/react/outline";
 import DropDownOptions from "./elements/DropDownOptions";
 import { InputModal } from "../../utils/InputModal";
 import axios from "axios";
-import { Url } from "../../common/constants/Url";
 import { Context } from "../context/Context";
 import { isAuth } from "../ConditionalWrapper";
+import { Url } from "../constants/Url";
+import { showErrorsToast, showSuccessToast } from "../../utils/Toast";
 
 const tabs = "";
 
@@ -23,8 +25,8 @@ const createRoom = async () => {
     inputLabel: "Create a unique 6 digit room ID",
     inputPlaceholder: "Create a room ID",
     inputAttributes: {
-      minlength: 5,
-      maxlength: 6,
+      minlength: 6,
+      maxlength: 7,
       autocapitalize: "off",
       autocorrect: "off",
     },
@@ -32,10 +34,51 @@ const createRoom = async () => {
       if (roomId) {
         const { user } = await getSession();
         const response = await axios.post(`${Url}/room/create`, {
+          name: user.name,
           email: user.email,
           roomId,
         });
-        console.log(response.data.data);
+        const { status } = await response.data;
+        if (status === 400) {
+          const { message } = await response.data;
+          showErrorsToast({ title: message });
+        } else {
+          const { message } = await response.data;
+          showSuccessToast({ title: message });
+        }
+      }
+    },
+  });
+};
+
+const joinRoom = async () => {
+  await InputModal({
+    title: "Join a room",
+    input: "text",
+    inputLabel: "Enter the room ID",
+    inputPlaceholder: "Enter the room ID",
+    inputAttributes: {
+      minlength: 6,
+      maxlength: 7,
+      autocapitalize: "off",
+      autocorrect: "off",
+    },
+    handleFunction: async (roomId) => {
+      if (roomId) {
+        const { user } = await getSession();
+        const response = await axios.post(`${Url}/room/join`, {
+          name: user.name,
+          email: user.email,
+          roomId,
+        });
+        const { status } = await response.data;
+        if (status === 400) {
+          const { message } = await response.data;
+          showErrorsToast({ title: message });
+        } else {
+          const { message } = await response.data;
+          showSuccessToast({ title: message });
+        }
       }
     },
   });
@@ -47,6 +90,14 @@ const options = [
     Icon: PlusCircleIcon,
     onClick: () => {
       createRoom();
+    },
+    active: false,
+  },
+  {
+    name: "Join Room",
+    Icon: UserAddIcon,
+    onClick: () => {
+      joinRoom();
     },
     active: false,
   },

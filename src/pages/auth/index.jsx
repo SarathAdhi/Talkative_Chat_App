@@ -4,6 +4,8 @@ import { GoogleSVG } from "../../assets/Svg";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { isAuth } from "../../common/ConditionalWrapper";
+import axios from "axios";
+import { Url } from "../../common/constants/Url";
 
 export default function SignIn({ providers }) {
   const router = useRouter();
@@ -30,6 +32,11 @@ export async function getServerSideProps(context) {
   const session = await getSession(context);
 
   if (session !== null) {
+    await axios.post(Url + "/auth", {
+      name: session.user.name,
+      email: session.user.email,
+      userImage: session.user.image,
+    });
     return {
       redirect: {
         permanent: false,
