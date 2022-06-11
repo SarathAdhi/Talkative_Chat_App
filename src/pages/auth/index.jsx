@@ -5,12 +5,14 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { Url } from "../../common/constants/Url";
+import { H3 } from "../../common/components/elements/Text";
 
 export default function SignIn({ providers }) {
   const router = useRouter();
 
   return (
-    <PageLayout className="justify-center items-center">
+    <PageLayout className="justify-center items-center gap-y-10">
+      <H3>Login with Google to continue.</H3>
       {Object.values(providers).map((provider) => (
         <div key={provider.name}>
           <button

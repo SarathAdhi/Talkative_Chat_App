@@ -18,6 +18,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   if (typeof window === "undefined") {
     return <></>;
   } else {
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
     return (
       <SessionProvider session={session}>
         <ContextProvider>

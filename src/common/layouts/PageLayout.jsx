@@ -6,6 +6,7 @@ import { Sidebar } from "../components/sidebar/Sidebar";
 import { Context } from "../context/Context";
 import { Layout } from "./Layout";
 import { useSession } from "next-auth/react";
+import MobileNavbar from "../components/sidebar/MobileNavbar";
 
 export const PageLayout = ({ title, description, className, children }) => {
   const { _user } = useContext(Context);
@@ -25,12 +26,17 @@ export const PageLayout = ({ title, description, className, children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="w-full h-full flex bg-[#2A0944] text-white rounded-lg ">
-          {userData.length !== 0 && <Sidebar userData={userData} />}
+        <div className="w-full h-full flex flex-col lg:flex-row bg-[#2A0944] text-white rounded-lg ">
+          {userData.length !== 0 && (
+            <>
+              <Sidebar userData={userData} />
+              <MobileNavbar userData={userData} />
+            </>
+          )}
 
           <div
             className={clsx(
-              "w-full h-full flex flex-col bg-[#2A0944] text-white rounded-lg",
+              "w-full h-full p-2 lg:p-3  flex flex-col bg-[#2A0944] text-white rounded-lg",
               className
             )}
           >

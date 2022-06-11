@@ -5,7 +5,8 @@ const showToast = async ({ title, icon }) => {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000,
+    timer: 2000,
+    padding: "5px",
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.addEventListener("mouseenter", Swal.stopTimer);
