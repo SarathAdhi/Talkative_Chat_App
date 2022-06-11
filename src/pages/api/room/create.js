@@ -1,20 +1,22 @@
-import { child, get, ref, set } from "firebase/database";
-import { dbDatabase } from "../../../lib/firebase";
+import { addDoc, getDocs } from "firebase/firestore";
+import { roomCollectionRef } from "../../../lib/firebase";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const { email, name, roomId } = req.body;
 
-    const room = await get(child(ref(dbDatabase), roomId));
-    const IsRoomExist = room.exists();
-
-    if (IsRoomExist) {
-      return res.json({
-        status: 400,
-        message: "Room already exist",
+    const URL_Snapshot = await getDocs(roomCollectionRef);
+    const isRoomExist = URL_Snapshot.docs
+      .map((doc) => doc.data())
+      .filter((data) => {
+        return data.roomId === roomId;
+      })
+      .map((data) => {
+        return data;
       });
-    } else {
-      set(ref(dbDatabase, roomId), {
+
+    if (isRoomExist.length === 0) {
+      const newRoom = {
         roomId,
         adminName: name,
         adminEmail: email,
@@ -25,10 +27,13 @@ export default async function handler(req, res) {
             status: "admin",
           },
         ],
-      });
-      return res.json({
-        message: "Room Created Successfully",
-      });
+        messages: [],
+      };
+      await addDoc(roomCollectionRef, newRoom);
+
+      res.json({ status: 200, message: "Room Created successfully" });
+    } else {
+      res.json({ status: 200, message: "Room already exist" });
     }
   }
 }

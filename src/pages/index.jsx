@@ -7,7 +7,7 @@ import { Context } from "../common/context/Context";
 import axios from "axios";
 import { Url } from "../common/constants/Url";
 
-export default function Home({ user, userRooms }) {
+export default function Home({ userRooms }) {
   const { _user } = useContext(Context);
   const [userData, setUserData] = _user;
 
@@ -15,7 +15,7 @@ export default function Home({ user, userRooms }) {
   const [userRoomDetails, setUserRoomDetails] = _userRooms;
 
   useEffect(() => {
-    setUserData(user);
+    // setUserData(user);
     setUserRoomDetails(userRooms);
   }, []);
 

@@ -1,10 +1,22 @@
 import clsx from "clsx";
 import Head from "next/head";
-import React from "react";
-import { Sidebar } from "../components/Sidebar";
+import { useRouter } from "next/router";
+import React, { useContext, useEffect } from "react";
+import { Sidebar } from "../components/Sidebar/Sidebar";
+import { Context } from "../context/Context";
 import { Layout } from "./Layout";
+import { useSession } from "next-auth/react";
 
 export const PageLayout = ({ title, description, className, children }) => {
+  const { _user } = useContext(Context);
+  const [userData, setUserData] = _user;
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userData) router.push("/auth");
+  }, [userData]);
+
   return (
     <>
       <Head>
@@ -14,11 +26,11 @@ export const PageLayout = ({ title, description, className, children }) => {
       </Head>
       <Layout>
         <div className="w-full h-full flex bg-[#2A0944] text-white rounded-lg ">
-          <Sidebar />
+          {userData.length !== 0 && <Sidebar userData={userData} />}
 
           <div
             className={clsx(
-              "w-full h-full p-5 flex flex-col bg-[#2A0944] text-white rounded-lg",
+              "w-full h-full flex flex-col bg-[#2A0944] text-white rounded-lg",
               className
             )}
           >
