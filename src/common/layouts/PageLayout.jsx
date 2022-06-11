@@ -2,7 +2,7 @@ import clsx from "clsx";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect } from "react";
-import { Sidebar } from "../components/Sidebar/Sidebar";
+import { Sidebar } from "../components/sidebar/Sidebar";
 import { Context } from "../context/Context";
 import { Layout } from "./Layout";
 import { useSession } from "next-auth/react";
