@@ -12,6 +12,8 @@ export default async function handler(req, res) {
         email,
         name,
         message,
+        date: new Date().toDateString(),
+        time: new Date().toLocaleTimeString(),
       }),
     });
     return res.json({

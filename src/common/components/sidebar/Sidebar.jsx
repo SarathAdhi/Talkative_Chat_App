@@ -17,7 +17,7 @@ export const Sidebar = ({ userData }) => {
 
   const user = userData;
   return (
-    <div className="w-96 p-5 flex flex-col gap-y-5 bg-[#160040] rounded-l-lg border-r-[1px]">
+    <div className="w-96 p-5 hidden lg:flex flex-col gap-y-5 bg-[#160040] rounded-l-lg border-r-[1px]">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-x-2">
           <img

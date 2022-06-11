@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
-import { H3 } from "../../common/components/elements/Text";
+import { H3, H4, H5, P } from "../../common/components/elements/Text";
 import { Context } from "../../common/context/Context";
 import { PageLayout } from "../../common/layouts/PageLayout";
 import SpeechRecognition, {
@@ -84,12 +84,12 @@ export default function ChatRoom() {
   // console.log(roomChats);
 
   return (
-    <PageLayout className="p-3 gap-2 rounded-b-none">
+    <PageLayout className="p-3 gap-2">
       <div className="w-full px-4 h-[75px] bg-[#160040]/90 backdrop-blur-xl flex justify-start items-center border-[1px] border-white/20 rounded-xl">
         <H3>Room ID: {id}</H3>
       </div>
 
-      <div className="w-full h-full p-2 flex flex-col gap-5 bg-[#7A0BC0]/20 shadow-xl backdrop-blur-xl border-[1px] border-white/20 rounded-xl overflow-y-auto">
+      <div className="w-full h-full p-2 flex flex-col gap-5 bg-[#7A0BC0]/20 shadow-xl backdrop-blur-xl border-[1px] border-white/20 rounded-xl overflow-x-hidden overflow-y-auto">
         {roomChats &&
           roomChats.messages.map((info, index) => {
             return (
@@ -97,12 +97,15 @@ export default function ChatRoom() {
                 key={index}
                 className={clsx(
                   "w-full flex flex-col",
-                  info.email === userDetails.email ? "items-end" : "items-start"
+                  info.email === userDetails.email
+                    ? "items-end pl-10 sm:pl-60"
+                    : "items-start pr-10 sm:pr-60"
                 )}
               >
-                <H3 className="px-3 py-2 rounded-lg bg-black">
+                <H5 className="px-3 py-2 text-sm md:text-base rounded-lg bg-black">
                   {info.message}
-                </H3>
+                </H5>
+                <P className="text-xs md:text-sm">{info.time}</P>
               </div>
             );
           })}
