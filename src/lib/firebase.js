@@ -4,7 +4,7 @@ import { getDatabase } from "firebase/database";
 import { collection, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDPZVrpeck9Q6liI8LN6RuoHTy5aue1c-c",
+  apiKey: process.env.FIREBASE_API_KEY,
   authDomain: "talkative-chatapp.firebaseapp.com",
   databaseURL: "https://talkative-chatapp-default-rtdb.firebaseio.com",
   projectId: "talkative-chatapp",
