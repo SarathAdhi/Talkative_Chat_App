@@ -1,6 +1,5 @@
-import { onValue, ref, set } from "firebase/database";
 import { getDocs } from "firebase/firestore";
-import { dbDatabase, roomCollectionRef } from "../../../lib/firebase";
+import { roomCollectionRef } from "../../../lib/firebase";
 
 export default async function handler(req, res) {
   switch (req.method) {

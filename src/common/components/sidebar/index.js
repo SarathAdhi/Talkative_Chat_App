@@ -2,12 +2,13 @@ import {
   LogoutIcon,
   PlusCircleIcon,
   UserAddIcon,
+  UserIcon,
 } from "@heroicons/react/outline";
 import { InputModal } from "../../../utils/InputModal";
-import axios from "axios";
+import Axios from "../../../lib/axios";
 import { showErrorsToast, showSuccessToast } from "../../../utils/Toast";
-import { Url } from "../../constants/Url";
 import { getSession, signOut } from "next-auth/react";
+import Router from "next/router";
 
 const createRoom = async () => {
   await InputModal({
@@ -24,7 +25,7 @@ const createRoom = async () => {
     handleFunction: async (roomId) => {
       if (roomId) {
         const { user } = await getSession();
-        const response = await axios.post(Url + "/room/create", {
+        const response = await Axios.post("/room/create", {
           name: user.name,
           email: user.email,
           roomId,
@@ -59,7 +60,7 @@ const joinRoom = async () => {
     handleFunction: async (roomId) => {
       if (roomId) {
         const { user } = await getSession();
-        const response = await axios.post(Url + "/room/join", {
+        const response = await Axios.post("/room/join", {
           name: user.name,
           email: user.email,
           roomId,
@@ -91,6 +92,14 @@ export const options = [
     Icon: UserAddIcon,
     onClick: () => {
       joinRoom();
+    },
+    active: false,
+  },
+  {
+    name: "Profile",
+    Icon: UserIcon,
+    onClick: () => {
+      Router.push("/profile");
     },
     active: false,
   },

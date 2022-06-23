@@ -15,12 +15,13 @@ import DropDownOptions from "../../common/components/elements/DropDownOptions";
 import clsx from "clsx";
 import { showErrorsToast, showWarningToast } from "../../utils/Toast";
 import { getSession } from "next-auth/react";
-import { LinkedItem } from "../../common/components/elements/LinkedItem";
+import { onSnapshot, query, where } from "firebase/firestore";
+import { chatCollectionRef } from "../../lib/firebase";
 import Axios from "../../lib/axios";
 
-export default function ChatRoom({ roomDetails }) {
+export default function ChatRoom({ chatDetails }) {
   const router = useRouter();
-  const { id } = router.query;
+  const { hashName, chatId } = router.query;
 
   const [roomChats, setRoomChats] = useState("");
   const [typedMessage, setTypedMessage] = useState("");
@@ -29,8 +30,8 @@ export default function ChatRoom({ roomDetails }) {
   const { _user } = useContext(Context);
   const [userDetails, setUserDetails] = _user;
 
-  const { _userRooms } = useContext(Context);
-  const [userRoomDetails, setUserRoomDetails] = _userRooms;
+  const { _userChats } = useContext(Context);
+  const [userChatDetails, setUserChatDetails] = _userChats;
 
   const {
     transcript,
@@ -46,28 +47,30 @@ export default function ChatRoom({ roomDetails }) {
   }
 
   useEffect(() => {
+    const _query = query(chatCollectionRef, where("chatId", "==", `${chatId}`));
+
+    onSnapshot(_query, (data) => {
+      const result = data.docs.map((item) => {
+        return { ...item.data(), id: item.id };
+      });
+
+      setRoomChats(...result);
+    });
+  }, []);
+
+  useEffect(() => {
     if (transcript !== "") setTypedMessage(transcript);
   }, [transcript]);
 
   useEffect(() => {
-    if (!isLoading) {
-      setRoomChats(
-        userRoomDetails.find((data) => {
-          return data.roomId === id;
-        })
-      );
-    }
-  }, [userRoomDetails, id]);
-
-  useEffect(() => {
-    if (roomDetails.status === 400) {
-      showErrorsToast({ title: roomDetails.message });
+    if (userChatDetails.status === 400) {
+      showErrorsToast({ title: chatDetails.message });
       router.replace("/");
     } else {
-      setRoomChats(...roomDetails);
+      setRoomChats(chatDetails);
       setIsLoading(false);
     }
-  }, [roomDetails]);
+  }, [chatDetails]);
 
   const options = [
     {
@@ -83,11 +86,10 @@ export default function ChatRoom({ roomDetails }) {
   const addMessageToTheConversion = async () => {
     if (typedMessage === "") showWarningToast({ title: "Message is empty." });
     else {
-      await Axios.post("/room/message", {
+      await Axios.post("/chat/message", {
         name: userDetails.name,
         hashName: userDetails.hashName,
         docId: roomChats.id,
-        roomId: id,
         message: typedMessage,
       });
 
@@ -95,17 +97,15 @@ export default function ChatRoom({ roomDetails }) {
     }
   };
 
-  // console.log(roomChats);
-
   return (
-    <PageLayout title={`Room | ${id}`} className="gap-2">
+    <PageLayout className="gap-2">
       <div className="w-full px-2 h-12 flex items-center rounded-xl">
-        <H3>Room ID: {id}</H3>
+        <H3>{hashName}</H3>
       </div>
 
       <div className="scroll-smooth w-full h-full p-2 flex flex-col gap-5 bg-[#7A0BC0]/20 shadow-xl backdrop-blur-xl border-[1px] border-white/20 rounded-xl overflow-x-hidden overflow-y-auto">
         {roomChats &&
-          roomChats.messages.map((info, index) => {
+          roomChats.messages?.map((info, index) => {
             return (
               <div
                 key={index}
@@ -116,22 +116,16 @@ export default function ChatRoom({ roomDetails }) {
                     : "items-start pr-10 sm:pr-60"
                 )}
               >
-                <LinkedItem
-                  href={`/profile/${info.hashName}`}
-                  className="text-sm text-sky-400"
-                >
-                  {info.hashName.substring(1)}
-                </LinkedItem>
                 <P
                   className={clsx(
-                    "relative px-2 py-1 flex gap-2 items-center rounded-md",
+                    "relative pb-3 px-2 py-1 flex gap-2 items-center rounded-md",
                     info.hashName === userDetails.hashName
                       ? "bg-[#265b4c]"
                       : "bg-[#222c32]"
                   )}
                 >
                   {info.message}
-                  <div className="w-[45px]">
+                  <div className="w-[45px] pl-5">
                     <P className="!text-[10px] absolute bottom-0 right-1">
                       {info.time}
                     </P>
@@ -198,16 +192,15 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const { id } = context.query;
-  const response = await Axios.post("/room", {
-    email: session.user.email,
-    roomId: id,
+  const { chatId } = context.query;
+  const { data } = await Axios.post("/chat", {
+    chatId,
   });
   // console.log(response.data);
 
   return {
     props: {
-      roomDetails: response.data,
+      chatDetails: data.data,
     },
   };
 }

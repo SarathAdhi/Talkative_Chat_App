@@ -5,7 +5,11 @@ module.exports = {
     "./components/**/*.{html,js}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        "loading-gif": "url('/loading2.gif')",
+      },
+    },
   },
   plugins: [],
 };

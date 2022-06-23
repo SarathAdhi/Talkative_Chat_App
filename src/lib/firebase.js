@@ -19,5 +19,6 @@ const app = initializeApp(firebaseConfig);
 export const dbFireStore = getFirestore(app);
 export const userCollectionRef = collection(dbFireStore, "users");
 export const roomCollectionRef = collection(dbFireStore, "rooms");
+export const chatCollectionRef = collection(dbFireStore, "chats");
 
 export const dbDatabase = getDatabase(app);

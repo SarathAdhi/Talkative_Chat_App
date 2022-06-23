@@ -1,63 +1,60 @@
 import { PageLayout } from "../common/layouts/PageLayout";
 import { getSession } from "next-auth/react";
-import { useEffect, useContext } from "react";
-
+import { useContext, useEffect } from "react";
 import { Context } from "../common/context/Context";
-import Image from "next/image";
+import { showSuccessToast } from "../utils/Toast";
+import { useRouter } from "next/router";
+import { showAlert } from "../utils/Alert";
 import { H3 } from "../common/components/elements/Text";
+import Axios from "../lib/axios";
+import { LinkedItem } from "../common/components/elements/LinkedItem";
 
-export default function Home() {
+export default function Home({ userDataSSR }) {
+  const router = useRouter();
+
   const { _user } = useContext(Context);
   const [userData, setUserData] = _user;
 
   const { _userRooms } = useContext(Context);
-  const [userRoomDetails, setUserRoomDetails] = _userRooms;
 
-  // useEffect(() => {
-  //   // setUserData(user);
-  // }, []);
+  async function showLoginStatusToast() {
+    const data = router.query;
+    if (data.msg) await showSuccessToast({ title: data.msg });
+    await router.replace("/");
+  }
 
-  const displayUserInstruction = [
-    {
-      webImage: require("../assets/home/create-room.png"),
-      mobileImage: require("../assets/home/create-room-cropped.png"),
-      text: "Create multiple rooms.",
-    },
-    {
-      webImage: require("../assets/home/join-room.png"),
-      mobileImage: require("../assets/home/join-room-cropped.png"),
-      text: "Join any rooms with room ID.",
-    },
-    {
-      webImage: require("../assets/home/recording-details.png"),
-      mobileImage: require("../assets/home/recording-details-cropped.png"),
-      text: "Stop .",
-    },
-  ];
+  useEffect(() => {
+    showLoginStatusToast();
+    if (userDataSSR.hashName === "") {
+      showAlert({
+        title:
+          "You need to create a new #tag for sending and receiving friend request.",
+        handleFunction: async () => {
+          await router.replace("/profile");
+        },
+      });
+    }
+  }, []);
 
   return (
-    <PageLayout className="justify-center items-center gap-10 md:gap-2 md:!px-10">
-      {displayUserInstruction.map((instr, index) => (
-        <div key={index}>
-          <div className="hidden md:block">
-            <Image
-              width={1000}
-              height={200}
-              className="rounded-2xl"
-              src={instr.webImage}
-            />
+    <PageLayout title="Home | Notification" className="gap-10 md:gap-2 md:!p-10">
+      {userData.notifications?.length !== 0 ? (
+        userData.notifications?.map((notification, index) => (
+          <div key={index} className="flex items-center gap-5 flex-wrap">
+            <p className="flex items-center gap-2">
+              <LinkedItem
+                href={`/profile/${notification.hashName}`}
+                className="text-sky-400"
+              >
+                {notification.hashName}
+              </LinkedItem>
+              {notification.tag}
+            </p>
           </div>
-          <div className="flex flex-col items-center justify-center md:hidden">
-            <Image
-              width={1000}
-              height={200}
-              className="rounded-2xl"
-              src={instr.mobileImage}
-            />
-            <H3 className="text-center">{instr.text}</H3>
-          </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <H3>No notifications to read.</H3>
+      )}
     </PageLayout>
   );
 }
@@ -73,8 +70,14 @@ export async function getServerSideProps(context) {
       },
     };
   }
+  const { data } = await Axios.post("/user", {
+    token: process.env.API_TOKEN,
+    email: session.user.email,
+  });
 
   return {
-    props: {},
+    props: {
+      userDataSSR: data.data[0],
+    },
   };
 }

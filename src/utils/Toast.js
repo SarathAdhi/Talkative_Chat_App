@@ -14,7 +14,7 @@ const showToast = async ({ title, icon }) => {
     },
   });
 
-  await Toast.fire({
+  Toast.fire({
     icon: icon,
     title: title,
   });

@@ -1,19 +1,27 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useContext } from "react";
+import { Fragment, useContext, useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { CubeIcon, UserCircleIcon, XIcon } from "@heroicons/react/outline";
+import {
+  CubeIcon,
+  LogoutIcon,
+  UserCircleIcon,
+  XIcon,
+} from "@heroicons/react/outline";
 import { options } from ".";
 import { LinkedItem } from "../elements/LinkedItem";
 import { Context } from "../../context/Context";
-import { H4, H5 } from "../elements/Text";
+import { H5 } from "../elements/Text";
 import { Input } from "../elements/Input";
+import { signOut } from "next-auth/react";
+import { Tabs } from "./Tabs";
 
-const ActionButtons = ({ onClick, Icon }) => (
+const ActionButtons = ({ onClick, Icon, name }) => (
   <button
-    className="flex gap-1 text-black items-center justify-center"
+    className="flex flex-col text-black items-center justify-center"
     onClick={onClick}
   >
     <Icon className="h-6 text-black" />
+    <p className="text-xs">{name}</p>
   </button>
 );
 
@@ -23,9 +31,18 @@ export default function MobileNavbar({ userData }) {
 
   const user = userData;
 
+  const [searchInputText, setSearchInputText] = useState("");
+  const filteredRoomDetails = userRoomDetails.filter((room) => {
+    if (searchInputText === "") {
+      return room;
+    } else {
+      return room.roomId.toLowerCase().includes(searchInputText);
+    }
+  });
+
   const createRoomOption = options[0];
   const joinRoomOption = options[1];
-  const logOutOption = options[2];
+  const profileOption = options[2];
 
   return (
     <Popover className="absolute top-0 left-0 h-full lg:hidden">
@@ -52,16 +69,18 @@ export default function MobileNavbar({ userData }) {
                 id="closeBtn"
                 className="text-gray-400 focus:outline-none"
               >
-                <XIcon className="h-6 w-6" aria-hidden="true" />
+                <XIcon className="h-7" aria-hidden="true" />
               </Popover.Button>
               <div className="flex items-center justify-center gap-4">
                 <ActionButtons
                   onClick={createRoomOption.onClick}
                   Icon={createRoomOption.Icon}
+                  name={createRoomOption.name}
                 />
                 <ActionButtons
                   onClick={joinRoomOption.onClick}
                   Icon={joinRoomOption.Icon}
+                  name={joinRoomOption.name}
                 />
               </div>
             </div>
@@ -73,31 +92,23 @@ export default function MobileNavbar({ userData }) {
                 />
                 <H5 className="text-black">{user ? user.name : "User"}</H5>
               </div>
-
-              <ActionButtons
-                onClick={logOutOption.onClick}
-                Icon={logOutOption.Icon}
-              />
+              <div className="flex gap-5">
+                <ActionButtons
+                  onClick={profileOption.onClick}
+                  Icon={profileOption.Icon}
+                />
+                <ActionButtons onClick={signOut} Icon={LogoutIcon} />
+              </div>
             </div>
             <div className="p-1">
-              <Input type="text" placeholder="Search for users or rooms" />
+              <Input
+                type="text"
+                placeholder="Search for users or rooms"
+                onChange={(e) => setSearchInputText(e.target.value)}
+              />
             </div>
-
-            <div className="px-2 py-4 overflow-y-auto flex flex-col gap-2">
-              {userRoomDetails.length !== 0 ? (
-                userRoomDetails.map((room, index) => (
-                  <LinkedItem
-                    key={index}
-                    onClick={() => document.getElementById("closeBtn").click()}
-                    className="bg-[#d7cbff] rounded-lg text-black px-2 py-2"
-                    href={`/room/${room.roomId}`}
-                  >
-                    {room.roomId}
-                  </LinkedItem>
-                ))
-              ) : (
-                <H5 className="text-black">No Room created..</H5>
-              )}
+            <div className="p-2">
+              <Tabs filteredRoomDetails={filteredRoomDetails} user={user} />
             </div>
           </div>
         </Popover.Panel>
