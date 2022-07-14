@@ -131,11 +131,11 @@ export default function ChatRoom({ roomDetails }) {
                   )}
                 >
                   {info.message}
-                  <div className="w-[45px]">
-                    <P className="!text-[10px] absolute bottom-0 right-1">
+                  <span className="w-[45px]">
+                    <span className="!text-[10px] absolute bottom-0 right-1">
                       {info.time}
-                    </P>
-                  </div>
+                    </span>
+                  </span>
                 </P>
               </div>
             );

@@ -37,7 +37,10 @@ export default function Home({ userDataSSR }) {
   }, []);
 
   return (
-    <PageLayout title="Home | Notification" className="gap-10 md:gap-2 md:!p-10">
+    <PageLayout
+      title="Home | Notification"
+      className="gap-10 md:gap-2 p-5 md:!p-10"
+    >
       {userData.notifications?.length !== 0 ? (
         userData.notifications?.map((notification, index) => (
           <div key={index} className="flex items-center gap-5 flex-wrap">

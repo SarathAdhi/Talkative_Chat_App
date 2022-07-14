@@ -30,6 +30,7 @@ const UserProfile = ({ user }) => {
       MyId: userData.id,
       UserEmail: user.email,
       UserHashName: user.hashName,
+      UserId: user.id,
     });
 
     router.back();

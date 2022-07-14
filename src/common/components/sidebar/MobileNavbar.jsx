@@ -8,7 +8,6 @@ import {
   XIcon,
 } from "@heroicons/react/outline";
 import { options } from ".";
-import { LinkedItem } from "../elements/LinkedItem";
 import { Context } from "../../context/Context";
 import { H5 } from "../elements/Text";
 import { Input } from "../elements/Input";
